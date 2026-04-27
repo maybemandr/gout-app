@@ -4,18 +4,35 @@ import streamlit as st
 st.set_page_config(page_title="痛风及高尿酸血症中西医诊疗智能决策系统", page_icon="🏥", layout="centered")
 
 # ================= 顶部 Logo 与标题区 =================
-# 调整比例为 [1, 3]，给左侧 Logo 更多展示空间，使其看起来更大
-col_logo, col_title = st.columns([1, 3])
 
-with col_logo:
-    # 加载你的 Logo 图片（确保 GitHub 仓库中已有全小写的 logo.png）
-    # use_container_width=True 会让图片填满该列宽度
-    st.image("logo.png", use_container_width=True)
+# 1. 独立放置 Logo，位于最上方，并通过 width 自由控制大小 (数字越大图片越大)
+st.image("logo.png", width=300)
 
-with col_title:
-    st.title("痛风及高尿酸血症中西医诊疗智能决策系统（2026）")
-    st.markdown("<font color='#7f8c8d'>基于 2020-2024 中美权威指南及中西医结合指南构建</font>", unsafe_allow_html=True)
-    st.markdown("<font color='#95a5a6' size='2'><i>© 版权归属于澳门大学中药机制与质量全国重点实验室 QC 组。</i></font>", unsafe_allow_html=True)
+# 2. 使用自定义样式强制标题单行显示，并针对手机屏幕自适应防溢出
+st.markdown(
+    """
+    <style>
+    .main-title {
+        white-space: nowrap; /* 强制绝对不换行 */
+        font-size: 28px;
+        font-weight: bold;
+        margin-top: 10px;
+        margin-bottom: 5px;
+        color: #1f2937;
+    }
+    @media (max-width: 768px) {
+        .main-title {
+            font-size: 16px; /* 手机端自动缩小一点字体以保证单行完整显示 */
+        }
+    }
+    </style>
+    <div class="main-title">痛风及高尿酸血症中西医诊疗智能决策系统（2026）</div>
+    """,
+    unsafe_allow_html=True
+)
+
+st.markdown("<font color='#7f8c8d'>基于 2020-2024 中美权威指南及中西医结合指南构建</font>", unsafe_allow_html=True)
+st.markdown("<font color='#95a5a6' size='2'><i>注：该版权归属于澳门大学中药机制与质量全国重点实验室 QC 组。</i></font>", unsafe_allow_html=True)
 
 st.divider()
 
