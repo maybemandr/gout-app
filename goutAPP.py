@@ -1,10 +1,22 @@
 import streamlit as st
 
 # ================= 页面基础设置 =================
-st.set_page_config(page_title="多指南痛风智能决策系统", page_icon="📋", layout="centered")
+st.set_page_config(page_title="多指南痛风智能决策系统", page_icon="⚕️", layout="centered")
 
-st.title("📋 痛风与高尿酸血症智能决策支持系统")
-st.markdown("<font color='#7f8c8d'>基于 2020-2024 中美权威指南及中西医结合指南构建</font>", unsafe_allow_html=True)
+# ================= 顶部 Logo 与标题区 =================
+# 将页面分为左右两列，比例大概是 1:5（左边窄放图片，右边宽放文字）
+col_logo, col_title = st.columns([1, 5])
+
+with col_logo:
+    # 加载你的 Logo 图片（请确保你已经在 GitHub 上传了这张名为 logo.png 的图片）
+    # 如果暂时还没上传图片，系统会报错。你可以先把下面这行代码前面加个 # 注释掉
+    st.image("logo.png", use_container_width=True)
+
+with col_title:
+    st.title("⚕️ 痛风及高尿酸血症中西医诊疗智能决策系统（2026）")
+    st.markdown("<font color='#7f8c8d'>基于 2020-2024 中美权威指南及中西医结合指南构建</font>", unsafe_allow_html=True)
+    st.markdown("<font color='#95a5a6' size='2'><i>© 2026 版权归属于澳门大学中药机制与质量全国重点实验室 QC 组。</i></font>", unsafe_allow_html=True)
+
 st.divider()
 
 # ================= 1. 输入区 =================
@@ -48,7 +60,7 @@ st.divider()
 
 # ================= 2. 逻辑推断与输出区 =================
 if st.button("生成综合指南诊疗策略", type="primary"):
-
+    
     # 合并症状态
     has_any_comorb = cb_ckd or cb_cvd or cb_stone or cb_dm or cb_htn
 
@@ -98,7 +110,7 @@ if st.button("生成综合指南诊疗策略", type="primary"):
 
     # ================= 策略2: 2020 美国 ACR 指南 =================
     acr_target = "强烈推荐采用达标治疗，血尿酸靶标 **&lt; 6.0 mg/dL (约 360 μmol/L)**。"
-
+    
     acr_ult_init = ""
     if cb_tophi or cb_freq:
         acr_ult_init = "**强烈推荐开启ULT**。（基于痛风石或频繁发作 ≥2次/年）。"
@@ -116,9 +128,9 @@ if st.button("生成综合指南诊疗策略", type="primary"):
     if race_idx in [0, 1]:
         acr_meds += "• **基因筛查：** 条件性推荐在亚裔和非裔人群开启别嘌醇前进行 **HLA-B*5801** 基因检测。\n"
     if cb_cvd:
-        acr_meds += "• **心血管风险：** 对于有心血管病史的患者，条件性推荐将非布司他替换为其他降尿酸药物。\n"
+         acr_meds += "• **心血管风险：** 对于有心血管病史的患者，条件性推荐将非布司他替换为其他降尿酸药物。\n"
     if not cb_never:
-        acr_meds += "• **抗炎预防：** 强烈推荐开启ULT时，同步给予抗炎预防治疗至少 3-6 个月。\n"
+         acr_meds += "• **抗炎预防：** 强烈推荐开启ULT时，同步给予抗炎预防治疗至少 3-6 个月。\n"
 
     # ================= 策略3: 2023 中西医结合诊疗指南 =================
     tcm_syndrome = "证候未明确，请结合脉象与舌诊"
@@ -153,22 +165,22 @@ if st.button("生成综合指南诊疗策略", type="primary"):
         tcm_rx = "未勾选核心中医症候信息，无法辨证推荐方药。"
 
     tcm_integration = ""
-    if cb_never:
+    if cb_never: 
         if sua >= 600:
             tcm_integration = f"当前血尿酸 ≥ 600μmol/L，**推荐起始中西医结合治疗**。"
         else:
             tcm_integration = f"血尿酸 &lt; 600μmol/L，**首选单纯中医药治疗**；若调理3个月未达标则改为中西结合。"
-    elif cb_acute:
-        if (cb_cold + cb_damp + cb_def) >= 1:
+    elif cb_acute: 
+        if (cb_cold + cb_damp + cb_def) >= 1: 
             tcm_integration = "急性期症状明显，**推荐中西医结合治疗**（中药内服外敷 + 西药抗炎镇痛）。"
         else:
             tcm_integration = "急性期症状轻微时可试用单纯中医药。"
-    elif cb_tophi:
+    elif cb_tophi: 
         if sua >= 540 or (cb_cold + cb_damp + cb_def) >= 1:
             tcm_integration = f"慢性期且血尿酸 ≥ 540μmol/L，**推荐开启中西医结合治疗**。"
         else:
             tcm_integration = "血尿酸 &lt; 540μmol/L 且证候稳定时，可尝试单纯中医药治疗。"
-    else:
+    else: 
         if sua >= 600:
             tcm_integration = f"间歇期血尿酸 ≥ 600μmol/L，**推荐中西医结合治疗**。"
         else:
@@ -176,7 +188,7 @@ if st.button("生成综合指南诊疗策略", type="primary"):
 
     # ================= 渲染结果卡片 =================
     st.success(f"**系统推断分期：** {clinical_state}")
-
+    
     st.markdown("### 📘 一、基于《中国指南》(2024版) 推荐")
     st.info(f"**🎯 治疗靶标：** {cn_target}  \n**⏱️ 降尿酸时机：** {cn_ult_init}  \n**💊 用药策略：** \n{cn_meds}")
 
@@ -185,5 +197,5 @@ if st.button("生成综合指南诊疗策略", type="primary"):
 
     st.markdown("### 🌿 三、基于《中西医结合诊疗指南》(2023版) 推荐")
     st.success(f"**☯️ 中医辨证：** {tcm_syndrome}  \n**🍵 经典方药：** {tcm_rx}  \n**⚡ 中西结合时机：** {tcm_integration}")
-
+    
     st.caption("免责声明：本系统基于最新指南文献构建，仅供医疗决策辅助参考，不可替代专业医师的当面诊断。")
