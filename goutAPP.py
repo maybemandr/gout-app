@@ -1,26 +1,35 @@
 import streamlit as st
 
 # ================= 页面基础设置 =================
-st.set_page_config(page_title="多指南痛风智能决策系统", page_icon="⚕️", layout="centered")
+st.set_page_config(page_title="痛风及高尿酸血症中西医诊疗智能决策系统", page_icon="🏥", layout="centered")
 
 # ================= 顶部 Logo 与标题区 =================
-# 将页面分为左右两列，比例大概是 1:5（左边窄放图片，右边宽放文字）
-col_logo, col_title = st.columns([1, 5])
+# 调整比例为 [1, 3]，给左侧 Logo 更多展示空间，使其看起来更大
+col_logo, col_title = st.columns([1, 3])
 
 with col_logo:
-    # 加载你的 Logo 图片（请确保你已经在 GitHub 上传了这张名为 logo.png 的图片）
-    # 如果暂时还没上传图片，系统会报错。你可以先把下面这行代码前面加个 # 注释掉
+    # 加载你的 Logo 图片（确保 GitHub 仓库中已有全小写的 logo.png）
+    # use_container_width=True 会让图片填满该列宽度
     st.image("logo.png", use_container_width=True)
 
 with col_title:
-    st.title("⚕️ 痛风及高尿酸血症中西医诊疗智能决策系统（2026）")
+    st.title("痛风及高尿酸血症中西医诊疗智能决策系统（2026）")
     st.markdown("<font color='#7f8c8d'>基于 2020-2024 中美权威指南及中西医结合指南构建</font>", unsafe_allow_html=True)
-    st.markdown("<font color='#95a5a6' size='2'><i>© 2026 版权归属于澳门大学中药机制与质量全国重点实验室 QC 组。</i></font>", unsafe_allow_html=True)
+    st.markdown("<font color='#95a5a6' size='2'><i>© 版权归属于澳门大学中药机制与质量全国重点实验室 QC 组。</i></font>", unsafe_allow_html=True)
 
 st.divider()
 
-# ================= 1. 输入区 =================
+# ================= 1. 基础指标与患者背景 =================
 st.subheader("1. 基础指标与患者背景")
+
+# 第一行：患者基本登记信息
+col_p1, col_p2 = st.columns(2)
+with col_p1:
+    patient_name = st.text_input("患者姓名:", placeholder="请输入姓名")
+with col_p2:
+    patient_contact = st.text_input("联系方式:", placeholder="请输入联系电话或微信号")
+
+# 第二行：生理指标信息
 col1, col2 = st.columns(2)
 with col1:
     sua = st.number_input("血尿酸 (SUA, μmol/L):", min_value=0.0, max_value=1500.0, value=520.0, step=10.0)
@@ -28,6 +37,7 @@ with col2:
     race_option = st.selectbox("种族/族裔背景:", ["亚裔 (如汉族、韩国等)", "非裔", "高加索裔/其他"])
     race_idx = ["亚裔 (如汉族、韩国等)", "非裔", "高加索裔/其他"].index(race_option)
 
+# ================= 2. 痛风发作频率与症状特征 =================
 st.subheader("2. 痛风发作频率与症状特征")
 st.markdown("<font color='#c0392b'><b>▶ 西医分期与中医辨证依据 (可多选)：</b></font>", unsafe_allow_html=True)
 
@@ -43,6 +53,7 @@ cb_cold = st.checkbox("关节冷痛，得热痛减，畏寒肢冷 (提示:寒湿
 cb_damp = st.checkbox("肢体困重，纳呆食少，大便黏滞 (提示:湿浊/湿热)")
 cb_def = st.checkbox("腰膝酸软，神疲乏力，夜尿频多 (提示:脾肾亏虚)")
 
+# ================= 3. 伴随合并症 =================
 st.subheader("3. 伴随合并症")
 st.markdown("<font color='#2980b9'><b>▶ 合并症将显著影响西药选择与靶标 (可多选)：</b></font>", unsafe_allow_html=True)
 
@@ -58,7 +69,7 @@ with col4:
 
 st.divider()
 
-# ================= 2. 逻辑推断与输出区 =================
+# ================= 逻辑推断与输出区 =================
 if st.button("生成综合指南诊疗策略", type="primary"):
     
     # 合并症状态
@@ -153,13 +164,13 @@ if st.button("生成综合指南诊疗策略", type="primary"):
     else:
         if cb_cold:
             tcm_syndrome = "寒湿痹阻证"
-            tcm_rx = "治以温经散寒，祛湿通络。推荐：**桂枝附子汤** 或 **桂枝芍药知母汤**。"
+            tcm_rx = "治以温经散寒，祛湿通络. 推荐：**桂枝附子汤** 或 **桂枝芍药知母汤**。"
         elif cb_damp:
             tcm_syndrome = "湿浊内蕴证"
             tcm_rx = "推荐：**平胃散 合 五苓散**。"
         elif cb_def:
             tcm_syndrome = "脾肾亏虚证"
-            tcm_rx = "治以健脾益肾，燥湿化浊。推荐：**济生肾气丸 合 参苓白术散** 或 **黄葵胶囊**。"
+            tcm_rx = "治以健脾益肾，燥湿化浊. 推荐：**济生肾气丸 合 参苓白术散** 或 **黄葵胶囊**。"
 
     if not tcm_rx:
         tcm_rx = "未勾选核心中医症候信息，无法辨证推荐方药。"
@@ -187,7 +198,7 @@ if st.button("生成综合指南诊疗策略", type="primary"):
             tcm_integration = "血尿酸达到启动标准但 &lt; 600μmol/L 时，可首选单纯中医药治疗。"
 
     # ================= 渲染结果卡片 =================
-    st.success(f"**系统推断分期：** {clinical_state}")
+    st.success(f"**评估对象：** {patient_name if patient_name else '未填写'} | **临床分期：** {clinical_state}")
     
     st.markdown("### 📘 一、基于《中国指南》(2024版) 推荐")
     st.info(f"**🎯 治疗靶标：** {cn_target}  \n**⏱️ 降尿酸时机：** {cn_ult_init}  \n**💊 用药策略：** \n{cn_meds}")
@@ -198,4 +209,5 @@ if st.button("生成综合指南诊疗策略", type="primary"):
     st.markdown("### 🌿 三、基于《中西医结合诊疗指南》(2023版) 推荐")
     st.success(f"**☯️ 中医辨证：** {tcm_syndrome}  \n**🍵 经典方药：** {tcm_rx}  \n**⚡ 中西结合时机：** {tcm_integration}")
     
+    st.caption(f"注：该版权归属于澳门大学中药机制与质量全国重点实验室 QC 组。")
     st.caption("免责声明：本系统基于最新指南文献构建，仅供医疗决策辅助参考，不可替代专业医师的当面诊断。")
